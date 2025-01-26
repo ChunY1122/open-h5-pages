@@ -125,8 +125,13 @@
 
         // 生成二维码函数
         function generateQRCode() {
+            // 这里替换成你的 GitHub Pages 地址
+            const pageUrl = window.location.hostname === 'localhost' || window.location.hostname === ''
+                ? 'https://chuny1122.github.io/dynamic-page/'  // 替换成你的 GitHub Pages 地址
+                : window.location.href;
+            
             const qr = qrcode(0, 'L');
-            qr.addData(window.location.href);
+            qr.addData(pageUrl);
             qr.make();
             document.getElementById('qrcode-container').innerHTML = qr.createImgTag(5);
         }
