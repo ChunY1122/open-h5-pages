@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态选择页面</title>
+    <!-- 添加 QRCode.js 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        /* 整体样式 */
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f5f7;
+        }
+
+        /* 打字效果容器 */
+        #typing-text {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #1d1d1f;
+            min-height: 60px;
+            text-align: center;
+        }
+
+        /* 选项容器 */
+        #options {
+            display: none; /* 初始隐藏 */
+            width: 100%;
+            max-width: 400px;
+            gap: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* 选项按钮样式 */
+        .option {
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            color: #1d1d1f;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .option:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 二维码容器样式 */
+        #qrcode-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        /* 管理员按钮样式 */
+        #admin-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="typing-text"></div>
+    <div id="options">
+        <button class="option">i eat chocolate quietly</button>
+        <button class="option">Make friends with me please</button>
+    </div>
+
+    <!-- 添加二维码容器和管理员按钮 -->
+    <div id="qrcode-container"></div>
+    <button id="admin-button">显示二维码</button>
+
+    <script>
+        // 要显示的文字
+        const text = `"I think we're going to have it," he told reporters on Air Force One on Saturday, adding that the island's 57,000 residents "want to be with us"`;
+        const typingText = document.getElementById('typing-text');
+        const options = document.getElementById('options');
+        let charIndex = 0;
+
+        // 计算每个字符的延迟时间，确保总时间为5秒
+        const totalDuration = 5000; // 5秒
+        const charDelay = totalDuration / text.length;
+
+        // 打字效果函数
+        function typeText() {
+            if (charIndex < text.length) {
+                typingText.textContent += text.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeText, charDelay); // 动态计算的延迟时间
+            } else {
+                // 文字显示完成后显示选项
+                options.style.display = 'block';
+                setTimeout(() => {
+                    options.style.opacity = '1';
+                }, 100);
+            }
+        }
+
+        // 生成二维码函数
+        function generateQRCode() {
+            const qr = qrcode(0, 'L');
+            qr.addData(window.location.href);
+            qr.make();
+            document.getElementById('qrcode-container').innerHTML = qr.createImgTag(5);
+        }
+
+        // 添加管理员按钮点击事件
+        document.getElementById('admin-button').addEventListener('click', function() {
+            const container = document.getElementById('qrcode-container');
+            if (container.style.display === 'none' || !container.style.display) {
+                container.style.display = 'block';
+                generateQRCode();
+                this.textContent = '隐藏二维码';
+            } else {
+                container.style.display = 'none';
+                this.textContent = '显示二维码';
+            }
+        });
+
+        // 页面加载后开始打字效果
+        window.onload = typeText;
+    </script>
+</body>
+</html> 
